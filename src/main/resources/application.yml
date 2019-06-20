@@ -1,0 +1,12 @@
+server:
+  port: 6080
+spring:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  flyway:
+    enabled: false
