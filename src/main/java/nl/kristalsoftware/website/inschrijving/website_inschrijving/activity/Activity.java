@@ -37,8 +37,18 @@ public class Activity {
 
     int seats;
 
+    @JsonUnwrapped
+    @Embedded
+    AgendaContentRef agendaContentRef;
+
     static Activity of(Product product, LocalDateTime activityDate, int seats) {
-        Activity activity = new Activity(null, product.getDescription(), product.getPrice(), activityDate, seats);
+        Activity activity = new Activity(null,
+                product.getDescription(),
+                product.getPrice(),
+                activityDate,
+                seats,
+                product.getAgendaContentRef()
+                );
         return activity;
     }
 }

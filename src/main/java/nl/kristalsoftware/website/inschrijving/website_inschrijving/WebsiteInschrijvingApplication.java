@@ -2,6 +2,7 @@ package nl.kristalsoftware.website.inschrijving.website_inschrijving;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.activity.ActivityService;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.activity.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.product.Description;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.product.Price;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.product.Product;
@@ -26,8 +27,14 @@ public class WebsiteInschrijvingApplication {
     CommandLineRunner seedProductTable(ProductService productService) {
         return args -> {
             log.info("Seed product table");
-            productService.addProduct(Description.of("Energiewandeling"), Price.of(new BigDecimal(0.00)));
-            productService.addProduct(Description.of("Meditatie"), Price.of(new BigDecimal(20.00)));
+            productService.addProduct(AgendaContentRef.of("35b177e7f7d35a7b23bb4d2c6201b736"),
+                    Description.of("Energiewandeling"),
+                    Price.of(new BigDecimal(0.00))
+                    );
+            productService.addProduct(AgendaContentRef.of("35b177e7f7d35a7b23bb4d2c6201cf03"),
+                    Description.of("Meditatie"),
+                    Price.of(new BigDecimal(20.00))
+                    );
         };
     }
 
