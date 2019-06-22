@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -19,10 +20,15 @@ public class ActivityService {
         repository.save(activity);
     }
 
-    public Iterable<Activity> getAllActivities() {
+    public Iterable<Activity> getAllCurrentActivities() {
         QActivity qActivity = QActivity.activity;
         LocalDateTime today = LocalDateTime.now();
-        BooleanExpression activitiesInFuture = qActivity.activityDate.goe(today);
-        return repository.findAll(activitiesInFuture, new Sort(Sort.DEFAULT_DIRECTION, "description", "activityDate"));
+        BooleanExpression currentActivities = qActivity.activityDate.goe(today);
+        return repository.findAll(currentActivities, new Sort(Sort.DEFAULT_DIRECTION, "description", "activityDate"));
     }
+
+    public Optional<Activity> getActivityById(Long id) {
+        return repository.findById(id);
+    }
+
 }

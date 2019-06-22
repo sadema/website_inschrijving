@@ -1,11 +1,9 @@
 package nl.kristalsoftware.website.inschrijving.website_inschrijving.activity;
 
 import lombok.RequiredArgsConstructor;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.product.Description;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,19 +16,21 @@ public class ActivityController {
     private final ActivityService activityService;
 
     @GetMapping("/activities")
-    public Collection<List<Activity>> getAllActivitiesByDescription() {
-        Iterable<Activity> activityIterable = activityService.getAllActivities();
-        Map<Description, List<Activity>> activitiesByDescription = groupByDescription(activityIterable);
-        return convertToListOfLists(activitiesByDescription);
+    public List<ActivityDto> getAllActivitiesByDescription() {
+        Iterable<Activity> activityIterable = activityService.getAllCurrentActivities();
+        Map<AgendaContentRef, List<Activity>> activitiesByContentRef = groupByContentRef(activityIterable);
+        return createActivityDto(activitiesByContentRef);
     }
 
-    private Map<Description, List<Activity>> groupByDescription(Iterable<Activity> activityIterable) {
+    private Map<AgendaContentRef, List<Activity>> groupByContentRef(Iterable<Activity> activityIterable) {
         return StreamSupport.stream(activityIterable.spliterator(), false)
-                .collect(Collectors.groupingBy(it -> it.getDescription()));
+                .collect(Collectors.groupingBy(it -> it.getAgendaContentRef()));
     }
 
-    private Collection<List<Activity>> convertToListOfLists(Map<Description, List<Activity>> activitiesByDescription) {
-        return activitiesByDescription.values();
+    private List<ActivityDto> createActivityDto(Map<AgendaContentRef, List<Activity>> activitiesByDescription) {
+        return activitiesByDescription.entrySet().stream()
+                .map(it -> ActivityDto.of(it.getKey().getContentRef(), it.getValue()))
+                .collect(Collectors.toList());
     }
 
 }
