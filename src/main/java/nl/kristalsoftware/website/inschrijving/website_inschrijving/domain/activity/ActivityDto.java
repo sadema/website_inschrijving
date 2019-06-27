@@ -1,4 +1,4 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.activity;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,6 @@ public class ActivityDto {
 
     private final String agendaContentRef;
 
-    private final List<Activity> activityItemList;
+    private final List<Activity> dbActivityItemList;
 
 }

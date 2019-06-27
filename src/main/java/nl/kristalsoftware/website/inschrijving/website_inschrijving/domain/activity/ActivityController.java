@@ -1,6 +1,7 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.activity;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity;
 
 import lombok.RequiredArgsConstructor;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +18,8 @@ public class ActivityController {
 
     @GetMapping("/activities")
     public List<ActivityDto> getAllActivitiesByDescription() {
-        Iterable<Activity> activityIterable = activityService.getAllCurrentActivities();
-        Map<AgendaContentRef, List<Activity>> activitiesByContentRef = groupByContentRef(activityIterable);
+        List<Activity> activityList = activityService.getAllCurrentActivities();
+        Map<AgendaContentRef, List<Activity>> activitiesByContentRef = groupByContentRef(activityList);
         return createActivityDto(activitiesByContentRef);
     }
 

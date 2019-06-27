@@ -1,4 +1,4 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.subscription;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain;
 
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +10,8 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor(staticName = "of")
 @Embeddable
-public class EmailAddress {
+public class AgendaContentRef {
 
-    private String email;
+    private final String contentRef;
 
 }
