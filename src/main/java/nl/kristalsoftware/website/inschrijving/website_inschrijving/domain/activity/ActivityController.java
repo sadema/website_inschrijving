@@ -3,6 +3,7 @@ package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.acti
 import lombok.RequiredArgsConstructor;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,4 +43,19 @@ public class ActivityController {
         }
         throw new ActivityNotFoundException(agendaRef, activityid);
     }
+
+    @GetMapping("/activities/{agenda_reference}/{activityid}/subscriptions")
+    public List<Subscription> getSubscriptions(
+            @PathVariable("agenda_reference") String agendaRef,
+            @PathVariable("activityid") String activityid) {
+        Optional<Activity> optionalActivity = activityService.getActivity(
+                AgendaContentRef.of(agendaRef), ActivityId.of(UUID.fromString(activityid)));
+        if (optionalActivity.isPresent()) {
+            return activityService.getSubscriptions(optionalActivity.get());
+        }
+        throw new ActivityNotFoundException(agendaRef, activityid);
+    }
+
+
+//    @PostMapping("/activities/{agenda_reference}/{activityid}/subscriptions")
 }

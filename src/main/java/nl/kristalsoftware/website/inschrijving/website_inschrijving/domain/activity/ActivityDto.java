@@ -11,6 +11,6 @@ public class ActivityDto {
 
     private final String agendaContentRef;
 
-    private final List<Activity> dbActivityItemList;
+    private final List<Activity> activities;
 
 }

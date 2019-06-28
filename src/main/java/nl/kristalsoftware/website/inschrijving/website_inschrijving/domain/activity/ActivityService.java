@@ -9,7 +9,9 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Descr
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class ActivityService {
         activityRepository.addActivity(activity);
     }
 
-    public void addSubscription(ActivityId activityid, UUID subscriptionid, Name name, Email email) {
+    public void addSubscription(ActivityId activityid, SubscriptionId subscriptionid, Name name, Email email) {
         activityRepository.addSubscription(activityid, subscriptionid, name, email);
     }
 
@@ -86,5 +88,9 @@ public class ActivityService {
         return activityList.stream()
                 .filter(it -> it.getActivityid().equals(activityId))
                 .findFirst();
+    }
+
+    public List<Subscription> getSubscriptions(Activity activity) {
+        return activityRepository.findSubscriptions(activity.getActivityid());
     }
 }

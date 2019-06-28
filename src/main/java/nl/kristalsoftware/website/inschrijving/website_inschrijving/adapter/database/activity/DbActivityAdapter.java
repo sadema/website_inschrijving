@@ -8,8 +8,11 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Activ
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityNotFoundException;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityRepository;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -29,20 +31,6 @@ public class DbActivityAdapter implements ActivityRepository {
 
     private final DbSubscriptionRepository dbSubscriptionRepository;
 
-//    private DbActivity transform(Activity activity) {
-//        List<DbSubscription> dbSubscriptionList = activity.getSubscriptions().stream()
-//                .map(it -> )
-//        return DbActivity.of(
-//                activity.getActivityid(),
-//                dbSubscriptionList,
-//                activity.getDescription(),
-//                activity.getPrice(),
-//                activity.getActivityDate(),
-//                activity.getTotalNumberOfSeats(),
-//                activity.getAgendaContentRef()
-//        );
-//    }
-//
     private Activity transform(DbActivity it) {
         return Activity.of(
                 it.getActivityid(),
@@ -55,14 +43,22 @@ public class DbActivityAdapter implements ActivityRepository {
         );
     }
 
-    private List<UUID> transform(List<DbSubscription> dbSubscriptionList) {
+    private List<Subscription> transform(List<DbSubscription> dbSubscriptionList) {
         return dbSubscriptionList.stream()
-                .map(it -> it.getSubscriptionid())
+                .map(it -> transform(it))
                 .collect(Collectors.toList());
     }
 
+    private Subscription transform(DbSubscription dbSubscription) {
+        return Subscription.of(
+                dbSubscription.getSubscriptionid(),
+                dbSubscription.getActivity().getActivityid(),
+                dbSubscription.getName(),
+                dbSubscription.getEmail());
+    }
+
     @Override
-    public void addSubscription(ActivityId activityid, UUID subscriptionid, Name name, Email email) {
+    public void addSubscription(ActivityId activityid, SubscriptionId subscriptionid, Name name, Email email) {
         Optional<DbActivity> optionalDbActivity =
                 dbActivityRepository.findByActivityid(activityid);
         optionalDbActivity.ifPresent(it -> {
@@ -102,6 +98,18 @@ public class DbActivityAdapter implements ActivityRepository {
         return dbActivityList.stream()
                 .map(it -> transform(it))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Subscription> findSubscriptions(ActivityId activityId) {
+        Optional<DbActivity> dbActivityOptional = dbActivityRepository.findByActivityid(activityId);
+        if (dbActivityOptional.isPresent()) {
+            List<DbSubscription> dbSubscriptionList = dbSubscriptionRepository.findAllByActivity(dbActivityOptional.get());
+            return dbSubscriptionList.stream()
+                    .map(it -> transform(it))
+                    .collect(Collectors.toList());
+        }
+        throw new ActivityNotFoundException(activityId);
     }
 
 

@@ -11,18 +11,20 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Agend
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Description;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 
 import java.util.List;
-import java.util.UUID;
 
 @Value
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Activity {
 
+    @JsonUnwrapped
     private ActivityId activityid;
 
-    List<UUID> subscriptions;
+    @JsonUnwrapped
+    List<Subscription> subscriptions;
 
     @JsonUnwrapped
     Description description;
@@ -39,7 +41,7 @@ public class Activity {
     @JsonUnwrapped
     AgendaContentRef agendaContentRef;
 
-    public static Activity of(ActivityId activityid, List<UUID> subscriptionList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
+    public static Activity of(ActivityId activityid, List<Subscription> subscriptionList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
         Activity activity = new Activity(activityid,
                 subscriptionList,
                 description,

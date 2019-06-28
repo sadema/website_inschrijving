@@ -7,6 +7,7 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Descr
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityService;
@@ -98,8 +99,8 @@ public class WebsiteInschrijvingApplication {
                     .filter(it -> it.getDescription().getDescription().equals("Energiewandeling"))
                     .findFirst();
             optionalActivity.ifPresent(it -> {
-                activityService.addSubscription(it.getActivityid(), UUID.randomUUID(), Name.of("Sjoerd", "Adema"), Email.of("s.adema@bla.com"));
-                activityService.addSubscription(it.getActivityid(), UUID.randomUUID(), Name.of("John", "Doe"), Email.of("j.doe@gmail.com"));
+                activityService.addSubscription(it.getActivityid(), SubscriptionId.of(UUID.randomUUID()), Name.of("Sjoerd", "Adema"), Email.of("s.adema@bla.com"));
+                activityService.addSubscription(it.getActivityid(), SubscriptionId.of(UUID.randomUUID()), Name.of("John", "Doe"), Email.of("j.doe@gmail.com"));
             });
         };
     }

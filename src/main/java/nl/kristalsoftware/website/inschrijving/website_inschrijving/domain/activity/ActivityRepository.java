@@ -4,18 +4,21 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Activ
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface ActivityRepository {
     void addActivity(Activity activity);
 
-    void addSubscription(ActivityId activityid, UUID subscriptionid, Name name, Email email);
+    void addSubscription(ActivityId activityid, SubscriptionId subscriptionid, Name name, Email email);
 
     List<Activity> findCurrentActivities();
 
     List<Activity> findByAgendaContentRef(AgendaContentRef agendaContentRef);
+
+    List<Subscription> findSubscriptions(ActivityId activityId);
 
 //    Optional<Activity> getActivityByActivityId(UUID id);
 }

@@ -20,8 +20,8 @@ public class ActivityControllerAdvice {
     private final RestErrorBuilder restErrorBuilder;
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    @ExceptionHandler({AgendaReferenceNotFoundException.class})
-    VndErrors agendaReferenceNotFoundException(DataNotFoundException ex) {
+    @ExceptionHandler({AgendaReferenceNotFoundException.class, ActivityNotFoundException.class})
+    VndErrors notFoundException(DataNotFoundException ex) {
         return restErrorBuilder.build(ex, ex.getLogRef());
     }
 
