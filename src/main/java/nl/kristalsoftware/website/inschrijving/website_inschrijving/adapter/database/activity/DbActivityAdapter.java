@@ -2,13 +2,19 @@ package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.dat
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.subscription.DbSubscription;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription.DbSubscription;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription.DbSubscriptionRepository;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,26 +25,28 @@ import java.util.stream.StreamSupport;
 @Component
 public class DbActivityAdapter implements ActivityRepository {
 
-    private final DbActivityRepository repository;
+    private final DbActivityRepository dbActivityRepository;
 
-    private DbActivity transform(Activity activity) {
-        List<DbSubscription> dbSubscriptionList = activity.getSubscriptionList().stream()
-                .map(it -> )
-        return DbActivity.of(
-                activity.getActivityid(),
-                dbSubscriptionList,
-                activity.getDescription(),
-                activity.getPrice(),
-                activity.getActivityDate(),
-                activity.getTotalNumberOfSeats(),
-                activity.getAgendaContentRef()
-        );
-    }
+    private final DbSubscriptionRepository dbSubscriptionRepository;
 
+//    private DbActivity transform(Activity activity) {
+//        List<DbSubscription> dbSubscriptionList = activity.getSubscriptions().stream()
+//                .map(it -> )
+//        return DbActivity.of(
+//                activity.getActivityid(),
+//                dbSubscriptionList,
+//                activity.getDescription(),
+//                activity.getPrice(),
+//                activity.getActivityDate(),
+//                activity.getTotalNumberOfSeats(),
+//                activity.getAgendaContentRef()
+//        );
+//    }
+//
     private Activity transform(DbActivity it) {
         return Activity.of(
                 it.getActivityid(),
-                it.getSubscriptionList(),
+                transform(it.getSubscriptionList()),
                 it.getDescription(),
                 it.getPrice(),
                 it.getActivityDate(),
@@ -47,10 +55,35 @@ public class DbActivityAdapter implements ActivityRepository {
         );
     }
 
+    private List<UUID> transform(List<DbSubscription> dbSubscriptionList) {
+        return dbSubscriptionList.stream()
+                .map(it -> it.getSubscriptionid())
+                .collect(Collectors.toList());
+    }
+
     @Override
-    public void save(Activity activity) {
-        DbActivity dbActivity = transform(activity);
-        repository.save(dbActivity);
+    public void addSubscription(ActivityId activityid, UUID subscriptionid, Name name, Email email) {
+        Optional<DbActivity> optionalDbActivity =
+                dbActivityRepository.findByActivityid(activityid);
+        optionalDbActivity.ifPresent(it -> {
+            DbSubscription dbSubscription = DbSubscription.of(subscriptionid, it, name, email);
+            dbSubscriptionRepository.save(dbSubscription);
+            it.getSubscriptionList().add(dbSubscription);
+            dbActivityRepository.save(it);
+        });
+    }
+
+    @Override
+    public void addActivity(Activity activity) {
+        DbActivity dbActivity = DbActivity.of(
+                activity.getActivityid(),
+                new ArrayList<>(),
+                activity.getDescription(),
+                activity.getPrice(),
+                activity.getActivityDate(),
+                activity.getTotalNumberOfSeats(),
+                activity.getAgendaContentRef());
+        dbActivityRepository.save(dbActivity);
     }
 
     @Override
@@ -58,14 +91,23 @@ public class DbActivityAdapter implements ActivityRepository {
         QDbActivity qActivity = QDbActivity.dbActivity;
         LocalDateTime today = LocalDateTime.now();
         BooleanExpression currentActivities = qActivity.activityDate.dateTime.goe(today);
-        Iterable<DbActivity> dbActivityIterable = repository.findAll(currentActivities, new Sort(Sort.DEFAULT_DIRECTION, "description", "activityDate"));
+        Iterable<DbActivity> dbActivityIterable = dbActivityRepository.findAll(currentActivities, new Sort(Sort.DEFAULT_DIRECTION, "description", "activityDate"));
         return StreamSupport.stream(dbActivityIterable.spliterator(), false)
                 .map(it -> transform(it)).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Activity> getActivityByActivityId(UUID id) {
-        Optional<DbActivity> optionalDbActivity = repository.findByActivityid(id);
-        return Optional.empty();
+    public List<Activity> findByAgendaContentRef(AgendaContentRef agendaContentRef) {
+        List<DbActivity> dbActivityList = dbActivityRepository.findByAgendaContentRef(agendaContentRef);
+        return dbActivityList.stream()
+                .map(it -> transform(it))
+                .collect(Collectors.toList());
     }
+
+
+//    @Override
+//    public Optional<Activity> getActivityByActivityId(UUID id) {
+//        Optional<DbActivity> optionalDbActivity = dbActivityRepository.findByActivityid(id);
+//        return Optional.empty();
+//    }
 }

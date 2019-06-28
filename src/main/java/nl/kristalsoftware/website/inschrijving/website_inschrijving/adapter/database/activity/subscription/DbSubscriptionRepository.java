@@ -1,4 +1,4 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.subscription;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

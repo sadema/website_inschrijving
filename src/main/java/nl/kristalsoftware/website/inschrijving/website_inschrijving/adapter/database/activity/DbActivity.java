@@ -4,21 +4,23 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.subscription.DbSubscription;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription.DbSubscription;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityDate;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Description;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
-import java.util.UUID;
 
 @Value
 @Entity
@@ -31,9 +33,10 @@ public class DbActivity {
     @GeneratedValue
     Long id;
 
-    UUID activityid;
+    @Embedded
+    ActivityId activityid;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<DbSubscription> subscriptionList;
 
     @Embedded
@@ -51,7 +54,7 @@ public class DbActivity {
     @Embedded
     AgendaContentRef agendaContentRef;
 
-    public static DbActivity of(UUID activityid, List<DbSubscription> subscriptionList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
+    public static DbActivity of(ActivityId activityid, List<DbSubscription> subscriptionList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
         DbActivity dbActivity = new DbActivity(null,
                 activityid,
                 subscriptionList,

@@ -1,11 +1,10 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.subscription;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
 
 import java.util.UUID;
 
@@ -16,7 +15,7 @@ public class Subscription {
     private UUID subscriptionid;
 
     @JsonUnwrapped
-    private Activity activity;
+    private UUID activityid;
 
     @JsonUnwrapped
     private Name name;
@@ -24,8 +23,8 @@ public class Subscription {
     @JsonUnwrapped
     private Email email;
 
-    public static Subscription of(Activity activity, Name name, Email email) {
-        return new Subscription(UUID.randomUUID(), activity, name, email);
+    public static Subscription of(UUID subscriptionid, UUID activityid, Name name, Email email) {
+        return new Subscription(subscriptionid, activityid, name, email);
     }
 
 }

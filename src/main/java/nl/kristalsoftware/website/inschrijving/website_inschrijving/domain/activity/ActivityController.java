@@ -1,14 +1,15 @@
 package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity;
 
 import lombok.RequiredArgsConstructor;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,20 +19,27 @@ public class ActivityController {
 
     @GetMapping("/activities")
     public List<ActivityDto> getAllActivitiesByDescription() {
-        List<Activity> activityList = activityService.getAllCurrentActivities();
-        Map<AgendaContentRef, List<Activity>> activitiesByContentRef = groupByContentRef(activityList);
-        return createActivityDto(activitiesByContentRef);
+        return activityService.getAllCurrentActivitiesByAgendaReference();
     }
 
-    private Map<AgendaContentRef, List<Activity>> groupByContentRef(Iterable<Activity> activityIterable) {
-        return StreamSupport.stream(activityIterable.spliterator(), false)
-                .collect(Collectors.groupingBy(it -> it.getAgendaContentRef()));
+    @GetMapping("/activities/{agenda_reference}")
+    public ActivityDto getActivitiesByAgendaId(@PathVariable("agenda_reference") String agendaRef) {
+         Optional<ActivityDto> optionalActivityDto = activityService.getActivitiesByAgendaReference(AgendaContentRef.of(agendaRef));
+         if (optionalActivityDto.isPresent()) {
+             return optionalActivityDto.get();
+         }
+         throw new AgendaReferenceNotFoundException(agendaRef);
     }
 
-    private List<ActivityDto> createActivityDto(Map<AgendaContentRef, List<Activity>> activitiesByDescription) {
-        return activitiesByDescription.entrySet().stream()
-                .map(it -> ActivityDto.of(it.getKey().getContentRef(), it.getValue()))
-                .collect(Collectors.toList());
+    @GetMapping("/activities/{agenda_reference}/{activityid}")
+    public Activity getActivity(
+            @PathVariable("agenda_reference") String agendaRef,
+            @PathVariable("activityid") String activityid) {
+        Optional<Activity> optionalActivity = activityService.getActivity(
+                AgendaContentRef.of(agendaRef), ActivityId.of(UUID.fromString(activityid)));
+        if (optionalActivity.isPresent()) {
+            return optionalActivity.get();
+        }
+        throw new ActivityNotFoundException(agendaRef, activityid);
     }
-
 }

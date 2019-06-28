@@ -1,4 +1,4 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.subscription;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -27,6 +28,8 @@ public class DbSubscription {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    UUID subscriptionid;
+
     @ManyToOne
     private DbActivity activity;
 
@@ -36,8 +39,8 @@ public class DbSubscription {
     @Embedded
     private Email email;
 
-    public static DbSubscription of(DbActivity activity, Name name, Email email) {
-        return new DbSubscription(null, activity, name, email);
+    public static DbSubscription of(UUID subscriptionid, DbActivity activity, Name name, Email email) {
+        return new DbSubscription(null, subscriptionid, activity, name, email);
     }
 
 }
