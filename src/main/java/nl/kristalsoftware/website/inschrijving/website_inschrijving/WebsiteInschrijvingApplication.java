@@ -11,6 +11,7 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Subsc
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityService;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.product.Product;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.product.ProductService;
 import org.springframework.boot.CommandLineRunner;
@@ -63,7 +64,7 @@ public class WebsiteInschrijvingApplication {
                 activityService.addActivity(
                         it.getDescription(),
                         it.getPrice(),
-                        ActivityDate.of(LocalDateTime.of(2019, 6, 29, 10, 0)),
+                        ActivityDate.of(LocalDateTime.of(2019, 8, 29, 10, 0)),
                         TotalNumberOfSeats.of(5),
                         it.getAgendaContentRef()
                 );
@@ -99,8 +100,19 @@ public class WebsiteInschrijvingApplication {
                     .filter(it -> it.getDescription().getDescription().equals("Energiewandeling"))
                     .findFirst();
             optionalActivity.ifPresent(it -> {
-                activityService.addSubscription(it.getActivityid(), SubscriptionId.of(UUID.randomUUID()), Name.of("Sjoerd", "Adema"), Email.of("s.adema@bla.com"));
-                activityService.addSubscription(it.getActivityid(), SubscriptionId.of(UUID.randomUUID()), Name.of("John", "Doe"), Email.of("j.doe@gmail.com"));
+                Subscription subscription = Subscription.of(
+                        SubscriptionId.of(UUID.randomUUID()),
+                        it.getActivityid(),
+                        Name.of("Sjoerd", "Adema"),
+                        Email.of("s.adema@bla.com"));
+                activityService.addSubscription(subscription);
+                subscription = Subscription.of(
+                        SubscriptionId.of(UUID.randomUUID()),
+                        it.getActivityid(),
+                        Name.of("John", "Doe"),
+                        Email.of("j.doe@gmail.com"));
+                activityService.addSubscription(subscription);
+//                activityService.addSubscription(it.getActivityid(), SubscriptionId.of(UUID.randomUUID()), Name.of("John", "Doe"), Email.of("j.doe@gmail.com"));
             });
         };
     }

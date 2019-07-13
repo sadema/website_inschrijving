@@ -4,9 +4,11 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@Embeddable
 @Value
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor(staticName = "of")

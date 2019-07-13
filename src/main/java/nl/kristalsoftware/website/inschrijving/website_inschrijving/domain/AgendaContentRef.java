@@ -6,10 +6,10 @@ import lombok.Value;
 
 import javax.persistence.Embeddable;
 
+@Embeddable
 @Value
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor(staticName = "of")
-@Embeddable
 public class AgendaContentRef {
 
     private final String contentRef;

@@ -1,8 +1,10 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.rest;
 
 import lombok.RequiredArgsConstructor;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.DataNotFoundException;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.RestErrorBuilder;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityNotFoundException;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.AgendaReferenceNotFoundException;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;

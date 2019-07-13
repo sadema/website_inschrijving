@@ -6,10 +6,7 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Activ
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Description;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 import org.springframework.stereotype.Service;
@@ -45,10 +42,9 @@ public class ActivityService {
         activityRepository.addActivity(activity);
     }
 
-    public void addSubscription(ActivityId activityid, SubscriptionId subscriptionid, Name name, Email email) {
-        activityRepository.addSubscription(activityid, subscriptionid, name, email);
+    public void addSubscription(Subscription subscription) {
+        activityRepository.addSubscription(subscription);
     }
-
 
     public List<ActivityDto> getAllCurrentActivitiesByAgendaReference() {
         List<Activity> activityList =  activityRepository.findCurrentActivities();

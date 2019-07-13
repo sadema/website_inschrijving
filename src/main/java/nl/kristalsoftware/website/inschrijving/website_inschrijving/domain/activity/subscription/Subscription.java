@@ -2,30 +2,32 @@ package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.acti
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 
-@Getter
-@AllArgsConstructor
+import javax.validation.constraints.NotNull;
+
+@Data
+@AllArgsConstructor(staticName = "of")
 public class Subscription {
 
+    @NotNull
     @JsonUnwrapped
-    private SubscriptionId subscriptionid;
+    private SubscriptionId subscriptionId;
 
+    @NotNull
     @JsonUnwrapped
-    private ActivityId activityid;
+    private ActivityId activityId;
 
+    @NotNull
     @JsonUnwrapped
     private Name name;
 
+    @NotNull
     @JsonUnwrapped
     private Email email;
-
-    public static Subscription of(SubscriptionId subscriptionid, ActivityId activityid, Name name, Email email) {
-        return new Subscription(subscriptionid, activityid, name, email);
-    }
 
 }

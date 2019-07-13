@@ -6,9 +6,6 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.data
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription.DbSubscriptionRepository;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityNotFoundException;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityRepository;
@@ -57,16 +54,12 @@ public class DbActivityAdapter implements ActivityRepository {
                 dbSubscription.getEmail());
     }
 
-    @Override
-    public void addSubscription(ActivityId activityid, SubscriptionId subscriptionid, Name name, Email email) {
-        Optional<DbActivity> optionalDbActivity =
-                dbActivityRepository.findByActivityid(activityid);
-        optionalDbActivity.ifPresent(it -> {
-            DbSubscription dbSubscription = DbSubscription.of(subscriptionid, it, name, email);
-            dbSubscriptionRepository.save(dbSubscription);
-            it.getSubscriptionList().add(dbSubscription);
-            dbActivityRepository.save(it);
-        });
+    private DbSubscription transform(Subscription subscription, DbActivity dbActivity) {
+        return DbSubscription.of(
+                subscription.getSubscriptionId(),
+                dbActivity,
+                subscription.getName(),
+                subscription.getEmail());
     }
 
     @Override
@@ -83,10 +76,26 @@ public class DbActivityAdapter implements ActivityRepository {
     }
 
     @Override
+    public void addSubscription(Subscription subscription) {
+        Optional<DbActivity> optionalDbActivity =
+                dbActivityRepository.findByActivityid(subscription.getActivityId());
+        if (optionalDbActivity.isPresent()) {
+            DbActivity dbActivity = optionalDbActivity.get();
+            DbSubscription dbSubscription = transform(subscription, dbActivity);
+            dbSubscriptionRepository.save(dbSubscription);
+            dbActivity.getSubscriptionList().add(dbSubscription);
+            dbActivityRepository.save(dbActivity);
+        }
+        else {
+            throw new ActivityNotFoundException(subscription.getActivityId());
+        }
+    }
+
+    @Override
     public List<Activity> findCurrentActivities() {
         QDbActivity qActivity = QDbActivity.dbActivity;
         LocalDateTime today = LocalDateTime.now();
-        BooleanExpression currentActivities = qActivity.activityDate.dateTime.goe(today);
+        BooleanExpression currentActivities = qActivity.activityDate.activityDate.goe(today);
         Iterable<DbActivity> dbActivityIterable = dbActivityRepository.findAll(currentActivities, new Sort(Sort.DEFAULT_DIRECTION, "description", "activityDate"));
         return StreamSupport.stream(dbActivityIterable.spliterator(), false)
                 .map(it -> transform(it)).collect(Collectors.toList());
