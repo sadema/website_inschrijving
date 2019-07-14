@@ -1,14 +1,12 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.rest;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.rest.activity;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityDto;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityNotFoundException;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityService;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.AgendaReferenceNotFoundException;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.TestSubscription;
 import org.springframework.http.ResponseEntity;
@@ -28,20 +26,6 @@ import java.util.UUID;
 public class ActivityController {
 
     private final ActivityService activityService;
-
-    @GetMapping("/activities")
-    public List<ActivityDto> getAllActivitiesByDescription() {
-        return activityService.getAllCurrentActivitiesByAgendaReference();
-    }
-
-    @GetMapping("/activities/{agenda_reference}")
-    public ActivityDto getActivitiesByAgendaId(@PathVariable("agenda_reference") String agendaRef) {
-         Optional<ActivityDto> optionalActivityDto = activityService.getActivitiesByAgendaReference(AgendaContentRef.of(agendaRef));
-         if (optionalActivityDto.isPresent()) {
-             return optionalActivityDto.get();
-         }
-         throw new AgendaReferenceNotFoundException(agendaRef);
-    }
 
     @GetMapping("/activities/{agenda_reference}/{activityid}")
     public Activity getActivity(

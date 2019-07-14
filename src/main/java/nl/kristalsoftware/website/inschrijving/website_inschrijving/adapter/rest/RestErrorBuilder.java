@@ -1,4 +1,4 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.rest;
 
 import org.springframework.hateoas.VndErrors;
 import org.springframework.stereotype.Component;

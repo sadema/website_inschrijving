@@ -21,6 +21,9 @@ import java.util.List;
 public class Activity {
 
     @JsonUnwrapped
+    AgendaContentRef agendaContentRef;
+
+    @JsonUnwrapped
     private ActivityId activityid;
 
     @JsonUnwrapped
@@ -38,17 +41,14 @@ public class Activity {
     @JsonUnwrapped
     TotalNumberOfSeats totalNumberOfSeats;
 
-    @JsonUnwrapped
-    AgendaContentRef agendaContentRef;
-
     public static Activity of(ActivityId activityid, List<Subscription> subscriptionList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
-        Activity activity = new Activity(activityid,
+        Activity activity = new Activity(agendaContentRef,
+                activityid,
                 subscriptionList,
                 description,
                 price,
                 activityDate,
-                totalNumberOfSeats,
-                agendaContentRef
+                totalNumberOfSeats
                 );
         return activity;
     }

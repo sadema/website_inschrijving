@@ -2,6 +2,7 @@ package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.acti
 
 
 import lombok.RequiredArgsConstructor;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.rest.agenda.AgendaItem;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityDate;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
@@ -46,7 +47,7 @@ public class ActivityService {
         activityRepository.addSubscription(subscription);
     }
 
-    public List<ActivityDto> getAllCurrentActivitiesByAgendaReference() {
+    public List<AgendaItem> getAllCurrentActivitiesByAgendaReference() {
         List<Activity> activityList =  activityRepository.findCurrentActivities();
         Map<AgendaContentRef, List<Activity>> activitiesByContentRef = groupByContentRef(activityList);
         return createActivityDto(activitiesByContentRef);
@@ -65,17 +66,17 @@ public class ActivityService {
         return activityList.stream().collect(Collectors.groupingBy(it -> it.getAgendaContentRef()));
     }
 
-    private List<ActivityDto> createActivityDto(Map<AgendaContentRef, List<Activity>> activitiesByDescription) {
+    private List<AgendaItem> createActivityDto(Map<AgendaContentRef, List<Activity>> activitiesByDescription) {
         return activitiesByDescription.entrySet().stream()
-                .map(it -> ActivityDto.of(it.getKey().getContentRef(), it.getValue()))
+                .map(it -> AgendaItem.of(it.getKey().getContentRef(), it.getValue()))
                 .collect(Collectors.toList());
     }
 
-    public Optional<ActivityDto> getActivitiesByAgendaReference(AgendaContentRef agendaContentRef) {
+    public Optional<AgendaItem> getActivitiesByAgendaReference(AgendaContentRef agendaContentRef) {
         List<Activity> activityList = activityRepository.findByAgendaContentRef(agendaContentRef);
         Map<AgendaContentRef, List<Activity>> activitiesByContentRef = groupByContentRef(activityList);
         return activitiesByContentRef.entrySet().stream()
-                .map(it -> ActivityDto.of(it.getKey().getContentRef(), it.getValue()))
+                .map(it -> AgendaItem.of(it.getKey().getContentRef(), it.getValue()))
                 .findFirst();
     }
 
