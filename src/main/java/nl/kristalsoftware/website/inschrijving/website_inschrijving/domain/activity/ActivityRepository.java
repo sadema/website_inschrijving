@@ -2,9 +2,11 @@ package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.acti
 
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ActivityRepository {
     void addActivity(Activity activity);
@@ -17,5 +19,8 @@ public interface ActivityRepository {
 
     List<Subscription> findSubscriptions(ActivityId activityId);
 
-//    Optional<Activity> getActivityByActivityId(UUID id);
+    Optional<Activity> findByActivityId(ActivityId activityId);
+
+    Optional<Subscription> findBySubscriptionId(SubscriptionId subscriptionId);
+
 }

@@ -57,7 +57,7 @@ public class WebsiteInschrijvingApplication {
                 activityService.addActivity(
                         it.getDescription(),
                         it.getPrice(),
-                        ActivityDate.of(LocalDateTime.of(2019, 7, 13, 10, 0)),
+                        ActivityDate.of(LocalDateTime.of(2019, 7, 23, 10, 0)),
                         TotalNumberOfSeats.of(5),
                         it.getAgendaContentRef()
                 );
@@ -74,7 +74,7 @@ public class WebsiteInschrijvingApplication {
                 activityService.addActivity(
                         it.getDescription(),
                         it.getPrice(),
-                        ActivityDate.of(LocalDateTime.of(2019, 7, 8, 10, 0)),
+                        ActivityDate.of(LocalDateTime.of(2019, 7, 28, 10, 0)),
                         TotalNumberOfSeats.of(6),
                         it.getAgendaContentRef()
                 );

@@ -6,6 +6,7 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.data
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription.DbSubscriptionRepository;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityNotFoundException;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityRepository;
@@ -51,7 +52,9 @@ public class DbActivityAdapter implements ActivityRepository {
                 dbSubscription.getSubscriptionid(),
                 dbSubscription.getActivity().getActivityid(),
                 dbSubscription.getName(),
-                dbSubscription.getEmail());
+                dbSubscription.getEmail(),
+                dbSubscription.getNote()
+        );
     }
 
     private DbSubscription transform(Subscription subscription, DbActivity dbActivity) {
@@ -59,7 +62,9 @@ public class DbActivityAdapter implements ActivityRepository {
                 subscription.getSubscriptionId(),
                 dbActivity,
                 subscription.getName(),
-                subscription.getEmail());
+                subscription.getEmail(),
+                subscription.getNote()
+        );
     }
 
     @Override
@@ -105,8 +110,18 @@ public class DbActivityAdapter implements ActivityRepository {
     public List<Activity> findByAgendaContentRef(AgendaContentRef agendaContentRef) {
         List<DbActivity> dbActivityList = dbActivityRepository.findByAgendaContentRef(agendaContentRef);
         return dbActivityList.stream()
+                .filter(it -> it.getActivityDate().getActivityDate().isAfter(LocalDateTime.now()))
                 .map(it -> transform(it))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Activity> findByActivityId(ActivityId activityId) {
+        Optional<DbActivity> dbActivityOptional = dbActivityRepository.findByActivityid(activityId);
+        if (dbActivityOptional.isPresent()) {
+            return Optional.of(transform(dbActivityOptional.get()));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -121,10 +136,14 @@ public class DbActivityAdapter implements ActivityRepository {
         throw new ActivityNotFoundException(activityId);
     }
 
+    @Override
+    public Optional<Subscription> findBySubscriptionId(SubscriptionId subscriptionId) {
+        Optional<DbSubscription> optionalDbSubscription =
+                dbSubscriptionRepository.findDbSubscriptionBySubscriptionid(subscriptionId);
+        if (optionalDbSubscription.isPresent()) {
+            return Optional.of(transform(optionalDbSubscription.get()));
+        }
+        return Optional.empty();
+    }
 
-//    @Override
-//    public Optional<Activity> getActivityByActivityId(UUID id) {
-//        Optional<DbActivity> optionalDbActivity = dbActivityRepository.findByActivityid(id);
-//        return Optional.empty();
-//    }
 }

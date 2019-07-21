@@ -11,7 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface DbActivityRepository extends CrudRepository<DbActivity,Long>, QuerydslPredicateExecutor<DbActivity> {
+
     Optional<DbActivity> findByActivityid(ActivityId activityid);
+
     List<DbActivity> findByAgendaContentRef(AgendaContentRef agendaContentRef);
-//    Iterable<Activity> findAllByOrderByDescription(BooleanExpression activitiesInFuture);
+
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Note;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 
 import javax.validation.constraints.NotNull;
@@ -29,5 +30,8 @@ public class Subscription {
     @NotNull
     @JsonUnwrapped
     private Email email;
+
+    @JsonUnwrapped
+    private Note note;
 
 }

@@ -13,6 +13,10 @@ public class ActivityNotFoundException extends DataNotFoundException {
         super("activityid: " + activityId.getActivityId());
     }
 
+    public ActivityNotFoundException(String activityId) {
+        super("activityid: " + activityId);
+    }
+
     @Override
     public String getMessage() {
         return "De activiteit is niet gevonden voor " + getLogRef();

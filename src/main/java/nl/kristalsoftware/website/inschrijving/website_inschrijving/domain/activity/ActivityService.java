@@ -8,6 +8,7 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Activ
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Description;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
 import org.springframework.stereotype.Service;
@@ -47,10 +48,10 @@ public class ActivityService {
         activityRepository.addSubscription(subscription);
     }
 
-    public List<AgendaItem> getAllCurrentActivitiesByAgendaReference() {
+    public List<AgendaItem> getAgenda() {
         List<Activity> activityList =  activityRepository.findCurrentActivities();
         Map<AgendaContentRef, List<Activity>> activitiesByContentRef = groupByContentRef(activityList);
-        return createActivityDto(activitiesByContentRef);
+        return createAgendaAsList(activitiesByContentRef);
     }
 
     public List<Activity> getAllCurrentActivities() {
@@ -66,7 +67,7 @@ public class ActivityService {
         return activityList.stream().collect(Collectors.groupingBy(it -> it.getAgendaContentRef()));
     }
 
-    private List<AgendaItem> createActivityDto(Map<AgendaContentRef, List<Activity>> activitiesByDescription) {
+    private List<AgendaItem> createAgendaAsList(Map<AgendaContentRef, List<Activity>> activitiesByDescription) {
         return activitiesByDescription.entrySet().stream()
                 .map(it -> AgendaItem.of(it.getKey().getContentRef(), it.getValue()))
                 .collect(Collectors.toList());
@@ -87,7 +88,16 @@ public class ActivityService {
                 .findFirst();
     }
 
+    public Optional<Activity> getActivity(ActivityId activityId) {
+        return activityRepository.findByActivityId(activityId);
+    }
+
     public List<Subscription> getSubscriptions(Activity activity) {
         return activityRepository.findSubscriptions(activity.getActivityid());
     }
+
+    public Optional<Subscription> getSubscription(SubscriptionId subscriptionId) {
+        return activityRepository.findBySubscriptionId(subscriptionId);
+    }
+
 }

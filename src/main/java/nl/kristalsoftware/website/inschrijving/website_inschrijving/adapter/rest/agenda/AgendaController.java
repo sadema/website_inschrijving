@@ -3,6 +3,7 @@ package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.res
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityService;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.AgendaReferenceNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +22,24 @@ public class AgendaController {
 
     @GetMapping("/agenda")
     public List<AgendaItem> getAllActivitiesByAgendaItem() {
-        return activityService.getAllCurrentActivitiesByAgendaReference();
+        return activityService.getAgenda();
     }
 
     @GetMapping("/agenda/{agenda_reference}")
     public AgendaItem getActivitiesByAgendaId(@PathVariable("agenda_reference") String agendaRef) {
-        Optional<AgendaItem> optionalAgenda = activityService.getActivitiesByAgendaReference(AgendaContentRef.of(agendaRef));
-        if (optionalAgenda.isPresent()) {
-            return optionalAgenda.get();
+        Optional<AgendaItem> optionalAgendaItem = activityService.getActivitiesByAgendaReference(AgendaContentRef.of(agendaRef));
+        if (optionalAgendaItem.isPresent()) {
+            return optionalAgendaItem.get();
+        }
+        throw new AgendaReferenceNotFoundException(agendaRef);
+    }
+
+    @GetMapping("/agenda/{agenda_reference}/activities")
+    public List<Activity> getActivities(
+            @PathVariable("agenda_reference") String agendaRef) {
+        Optional<AgendaItem> optionalAgendaItem = activityService.getActivitiesByAgendaReference(AgendaContentRef.of(agendaRef));
+        if (optionalAgendaItem.isPresent()) {
+            return optionalAgendaItem.get().getActivities();
         }
         throw new AgendaReferenceNotFoundException(agendaRef);
     }

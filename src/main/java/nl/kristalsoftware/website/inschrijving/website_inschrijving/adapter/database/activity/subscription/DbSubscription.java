@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.DbActivity;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Note;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 
 import javax.persistence.Embedded;
@@ -40,8 +41,11 @@ public class DbSubscription {
     @Embedded
     private Email email;
 
-    public static DbSubscription of(SubscriptionId subscriptionid, DbActivity activity, Name name, Email email) {
-        return new DbSubscription(null, subscriptionid, activity, name, email);
+    @Embedded
+    private Note note;
+
+    public static DbSubscription of(SubscriptionId subscriptionid, DbActivity activity, Name name, Email email, Note note) {
+        return new DbSubscription(null, subscriptionid, activity, name, email, note);
     }
 
 }

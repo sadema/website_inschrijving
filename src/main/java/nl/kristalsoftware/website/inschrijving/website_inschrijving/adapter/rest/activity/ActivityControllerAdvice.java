@@ -5,6 +5,7 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.DataNotFound
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.rest.RestErrorBuilder;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityNotFoundException;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.AgendaReferenceNotFoundException;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.SubscriptionNotFoundException;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,7 +23,7 @@ public class ActivityControllerAdvice {
     private final RestErrorBuilder restErrorBuilder;
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    @ExceptionHandler({AgendaReferenceNotFoundException.class, ActivityNotFoundException.class})
+    @ExceptionHandler({AgendaReferenceNotFoundException.class, ActivityNotFoundException.class, SubscriptionNotFoundException.class})
     VndErrors notFoundException(DataNotFoundException ex) {
         return restErrorBuilder.build(ex, ex.getLogRef());
     }
