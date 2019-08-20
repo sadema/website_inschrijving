@@ -3,7 +3,7 @@ create sequence hibernate_sequence;
 create table product (
   id bigint not null,
   productid binary not null,
-  content_ref varchar(255 not null),
+  content_ref varchar(255) not null,
   description varchar(255) not null,
   price decimal(19,2)
 )

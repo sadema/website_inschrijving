@@ -6,6 +6,7 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Agend
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Description;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Note;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
@@ -57,14 +58,14 @@ public class WebsiteInschrijvingApplication {
                 activityService.addActivity(
                         it.getDescription(),
                         it.getPrice(),
-                        ActivityDate.of(LocalDateTime.of(2019, 7, 23, 10, 0)),
+                        ActivityDate.of(LocalDateTime.of(2019, 10, 23, 10, 0)),
                         TotalNumberOfSeats.of(5),
                         it.getAgendaContentRef()
                 );
                 activityService.addActivity(
                         it.getDescription(),
                         it.getPrice(),
-                        ActivityDate.of(LocalDateTime.of(2019, 8, 29, 10, 0)),
+                        ActivityDate.of(LocalDateTime.of(2019, 11, 29, 10, 0)),
                         TotalNumberOfSeats.of(5),
                         it.getAgendaContentRef()
                 );
@@ -74,7 +75,7 @@ public class WebsiteInschrijvingApplication {
                 activityService.addActivity(
                         it.getDescription(),
                         it.getPrice(),
-                        ActivityDate.of(LocalDateTime.of(2019, 7, 28, 10, 0)),
+                        ActivityDate.of(LocalDateTime.of(2019, 10, 28, 10, 0)),
                         TotalNumberOfSeats.of(6),
                         it.getAgendaContentRef()
                 );
@@ -83,7 +84,7 @@ public class WebsiteInschrijvingApplication {
                 activityService.addActivity(
                         it.getDescription(),
                         it.getPrice(),
-                        ActivityDate.of(LocalDateTime.of(2019, 3, 1, 10, 0)),
+                        ActivityDate.of(LocalDateTime.of(2019, 8, 1, 10, 0)),
                         TotalNumberOfSeats.of(5),
                         it.getAgendaContentRef()
                 );
@@ -104,15 +105,16 @@ public class WebsiteInschrijvingApplication {
                         SubscriptionId.of(UUID.randomUUID()),
                         it.getActivityid(),
                         Name.of("Sjoerd", "Adema"),
-                        Email.of("s.adema@bla.com"));
+                        Email.of("s.adema@bla.com"),
+                        Note.of("Is er ook thee?"));
                 activityService.addSubscription(subscription);
                 subscription = Subscription.of(
                         SubscriptionId.of(UUID.randomUUID()),
                         it.getActivityid(),
                         Name.of("John", "Doe"),
-                        Email.of("j.doe@gmail.com"));
+                        Email.of("j.doe@gmail.com"),
+                        null);
                 activityService.addSubscription(subscription);
-//                activityService.addSubscription(it.getActivityid(), SubscriptionId.of(UUID.randomUUID()), Name.of("John", "Doe"), Email.of("j.doe@gmail.com"));
             });
         };
     }
