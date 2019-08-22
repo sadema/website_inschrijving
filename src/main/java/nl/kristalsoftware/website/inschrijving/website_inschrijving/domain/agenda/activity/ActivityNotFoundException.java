@@ -1,7 +1,7 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity;
 
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.DataNotFoundException;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityRef;
 
 public class ActivityNotFoundException extends DataNotFoundException {
 
@@ -9,8 +9,8 @@ public class ActivityNotFoundException extends DataNotFoundException {
         super("agendaReference: " + agendaRef + " activityid: " + activityid);
     }
 
-    public ActivityNotFoundException(ActivityId activityId) {
-        super("activityid: " + activityId.getActivityId());
+    public ActivityNotFoundException(ActivityRef activityRef) {
+        super("activityid: " + activityRef.getActivityRef());
     }
 
     public ActivityNotFoundException(String activityId) {

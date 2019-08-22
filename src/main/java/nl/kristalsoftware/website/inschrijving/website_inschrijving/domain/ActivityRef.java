@@ -11,8 +11,8 @@ import java.util.UUID;
 @Value
 @RequiredArgsConstructor(staticName = "of")
 @NoArgsConstructor(force = true)
-public class ActivityId {
+public class ActivityRef {
 
-    private UUID activityId;
+    private UUID activityRef;
 
 }

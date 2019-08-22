@@ -1,7 +1,7 @@
 package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription;
 
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.DbActivity;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionRef;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +13,6 @@ public interface DbSubscriptionRepository extends CrudRepository<DbSubscription,
 
     List<DbSubscription> findAllByActivity(DbActivity dbActivity);
 
-    Optional<DbSubscription> findDbSubscriptionBySubscriptionid(SubscriptionId subscriptionId);
+    Optional<DbSubscription> findDbSubscriptionBySubscriptionRef(SubscriptionRef subscriptionRef);
 
 }

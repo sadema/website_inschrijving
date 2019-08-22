@@ -4,13 +4,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription.DbSubscription;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription.DbSubscriptionRepository;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityNotFoundException;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityRepository;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionRef;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.ActivityNotFoundException;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.ActivityRepository;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.ActivityRootEntity;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.subscription.SubscriptionAggregate;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +29,9 @@ public class DbActivityAdapter implements ActivityRepository {
 
     private final DbSubscriptionRepository dbSubscriptionRepository;
 
-    private Activity transform(DbActivity it) {
-        return Activity.of(
-                it.getActivityid(),
+    private ActivityRootEntity transform(DbActivity it) {
+        return ActivityRootEntity.of(
+                it.getActivityRef(),
                 transform(it.getSubscriptionList()),
                 it.getDescription(),
                 it.getPrice(),
@@ -41,63 +41,63 @@ public class DbActivityAdapter implements ActivityRepository {
         );
     }
 
-    private List<Subscription> transform(List<DbSubscription> dbSubscriptionList) {
+    private List<SubscriptionAggregate> transform(List<DbSubscription> dbSubscriptionList) {
         return dbSubscriptionList.stream()
                 .map(it -> transform(it))
                 .collect(Collectors.toList());
     }
 
-    private Subscription transform(DbSubscription dbSubscription) {
-        return Subscription.of(
-                dbSubscription.getSubscriptionid(),
-                dbSubscription.getActivity().getActivityid(),
+    private SubscriptionAggregate transform(DbSubscription dbSubscription) {
+        return SubscriptionAggregate.of(
+                dbSubscription.getSubscriptionRef(),
+                dbSubscription.getActivity().getActivityRef(),
                 dbSubscription.getName(),
                 dbSubscription.getEmail(),
                 dbSubscription.getNote()
         );
     }
 
-    private DbSubscription transform(Subscription subscription, DbActivity dbActivity) {
+    private DbSubscription transform(SubscriptionAggregate subscriptionAggregate, DbActivity dbActivity) {
         return DbSubscription.of(
-                subscription.getSubscriptionId(),
+                subscriptionAggregate.getSubscriptionRef(),
                 dbActivity,
-                subscription.getName(),
-                subscription.getEmail(),
-                subscription.getNote()
+                subscriptionAggregate.getName(),
+                subscriptionAggregate.getEmail(),
+                subscriptionAggregate.getNote()
         );
     }
 
     @Override
-    public void addActivity(Activity activity) {
+    public void addActivity(ActivityRootEntity activityRootEntity) {
         DbActivity dbActivity = DbActivity.of(
-                activity.getActivityid(),
+                activityRootEntity.getActivityid(),
                 new ArrayList<>(),
-                activity.getDescription(),
-                activity.getPrice(),
-                activity.getActivityDate(),
-                activity.getTotalNumberOfSeats(),
-                activity.getAgendaContentRef());
+                activityRootEntity.getDescription(),
+                activityRootEntity.getPrice(),
+                activityRootEntity.getActivityDate(),
+                activityRootEntity.getTotalNumberOfSeats(),
+                activityRootEntity.getAgendaContentRef());
         dbActivityRepository.save(dbActivity);
     }
 
     @Override
-    public void addSubscription(Subscription subscription) {
+    public void addSubscription(SubscriptionAggregate subscriptionAggregate) {
         Optional<DbActivity> optionalDbActivity =
-                dbActivityRepository.findByActivityid(subscription.getActivityId());
+                dbActivityRepository.findByActivityRef(subscriptionAggregate.getActivityRef());
         if (optionalDbActivity.isPresent()) {
             DbActivity dbActivity = optionalDbActivity.get();
-            DbSubscription dbSubscription = transform(subscription, dbActivity);
+            DbSubscription dbSubscription = transform(subscriptionAggregate, dbActivity);
             dbSubscriptionRepository.save(dbSubscription);
             dbActivity.getSubscriptionList().add(dbSubscription);
             dbActivityRepository.save(dbActivity);
         }
         else {
-            throw new ActivityNotFoundException(subscription.getActivityId());
+            throw new ActivityNotFoundException(subscriptionAggregate.getActivityRef());
         }
     }
 
     @Override
-    public List<Activity> findCurrentActivities() {
+    public List<ActivityRootEntity> findCurrentActivities() {
         QDbActivity qActivity = QDbActivity.dbActivity;
         LocalDateTime today = LocalDateTime.now();
         BooleanExpression currentActivities = qActivity.activityDate.activityDate.goe(today);
@@ -107,7 +107,7 @@ public class DbActivityAdapter implements ActivityRepository {
     }
 
     @Override
-    public List<Activity> findByAgendaContentRef(AgendaContentRef agendaContentRef) {
+    public List<ActivityRootEntity> findByAgendaContentRef(AgendaContentRef agendaContentRef) {
         List<DbActivity> dbActivityList = dbActivityRepository.findByAgendaContentRef(agendaContentRef);
         return dbActivityList.stream()
                 .filter(it -> it.getActivityDate().getActivityDate().isAfter(LocalDateTime.now()))
@@ -116,8 +116,8 @@ public class DbActivityAdapter implements ActivityRepository {
     }
 
     @Override
-    public Optional<Activity> findByActivityId(ActivityId activityId) {
-        Optional<DbActivity> dbActivityOptional = dbActivityRepository.findByActivityid(activityId);
+    public Optional<ActivityRootEntity> findByActivityRef(ActivityRef activityRef) {
+        Optional<DbActivity> dbActivityOptional = dbActivityRepository.findByActivityRef(activityRef);
         if (dbActivityOptional.isPresent()) {
             return Optional.of(transform(dbActivityOptional.get()));
         }
@@ -125,21 +125,21 @@ public class DbActivityAdapter implements ActivityRepository {
     }
 
     @Override
-    public List<Subscription> findSubscriptions(ActivityId activityId) {
-        Optional<DbActivity> dbActivityOptional = dbActivityRepository.findByActivityid(activityId);
+    public List<SubscriptionAggregate> findSubscriptions(ActivityRef activityRef) {
+        Optional<DbActivity> dbActivityOptional = dbActivityRepository.findByActivityRef(activityRef);
         if (dbActivityOptional.isPresent()) {
             List<DbSubscription> dbSubscriptionList = dbSubscriptionRepository.findAllByActivity(dbActivityOptional.get());
             return dbSubscriptionList.stream()
                     .map(it -> transform(it))
                     .collect(Collectors.toList());
         }
-        throw new ActivityNotFoundException(activityId);
+        throw new ActivityNotFoundException(activityRef);
     }
 
     @Override
-    public Optional<Subscription> findBySubscriptionId(SubscriptionId subscriptionId) {
+    public Optional<SubscriptionAggregate> findBySubscriptionId(SubscriptionRef subscriptionRef) {
         Optional<DbSubscription> optionalDbSubscription =
-                dbSubscriptionRepository.findDbSubscriptionBySubscriptionid(subscriptionId);
+                dbSubscriptionRepository.findDbSubscriptionBySubscriptionRef(subscriptionRef);
         if (optionalDbSubscription.isPresent()) {
             return Optional.of(transform(optionalDbSubscription.get()));
         }

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.database.activity.subscription.DbSubscription;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityDate;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Description;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
@@ -34,7 +34,7 @@ public class DbActivity {
     Long id;
 
     @Embedded
-    ActivityId activityid;
+    ActivityRef activityRef;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<DbSubscription> subscriptionList;
@@ -54,9 +54,9 @@ public class DbActivity {
     @Embedded
     AgendaContentRef agendaContentRef;
 
-    public static DbActivity of(ActivityId activityid, List<DbSubscription> subscriptionList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
+    public static DbActivity of(ActivityRef activityRef, List<DbSubscription> subscriptionList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
         DbActivity dbActivity = new DbActivity(null,
-                activityid,
+                activityRef,
                 subscriptionList,
                 description,
                 price,

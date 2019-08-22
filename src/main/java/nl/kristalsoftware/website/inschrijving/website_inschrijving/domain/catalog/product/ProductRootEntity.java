@@ -1,4 +1,4 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.product;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.catalog.product;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
@@ -7,14 +7,13 @@ import lombok.Getter;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Description;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
-
-import java.util.UUID;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ProductRef;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PUBLIC, staticName = "of")
-public class Product {
+public class ProductRootEntity {
 
-    private UUID productid;
+    private ProductRef productRef;
 
     @JsonUnwrapped
     private AgendaContentRef agendaContentRef;

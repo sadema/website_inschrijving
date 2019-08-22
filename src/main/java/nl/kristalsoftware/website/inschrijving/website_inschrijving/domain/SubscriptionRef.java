@@ -11,8 +11,8 @@ import java.util.UUID;
 @Value
 @AllArgsConstructor(staticName = "of")
 @NoArgsConstructor(force = true)
-public class SubscriptionId {
+public class SubscriptionRef {
 
-    private final UUID subscriptionId;
+    private final UUID subscriptionRef;
 
 }

@@ -1,4 +1,4 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
@@ -6,28 +6,28 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityDate;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.ActivityRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.AgendaContentRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Description;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.subscription.SubscriptionAggregate;
 
 import java.util.List;
 
 @Value
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Activity {
+public class ActivityRootEntity {
 
     @JsonUnwrapped
     AgendaContentRef agendaContentRef;
 
     @JsonUnwrapped
-    private ActivityId activityid;
+    private ActivityRef activityid;
 
     @JsonUnwrapped
-    List<Subscription> subscriptions;
+    List<SubscriptionAggregate> subscriptionAggregates;
 
     @JsonUnwrapped
     Description description;
@@ -41,16 +41,20 @@ public class Activity {
     @JsonUnwrapped
     TotalNumberOfSeats totalNumberOfSeats;
 
-    public static Activity of(ActivityId activityid, List<Subscription> subscriptionList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
-        Activity activity = new Activity(agendaContentRef,
+    public static ActivityRootEntity of(ActivityRef activityid, List<SubscriptionAggregate> subscriptionAggregateList, Description description, Price price, ActivityDate activityDate, TotalNumberOfSeats totalNumberOfSeats, AgendaContentRef agendaContentRef) {
+        ActivityRootEntity activityRootEntity = new ActivityRootEntity(agendaContentRef,
                 activityid,
-                subscriptionList,
+                subscriptionAggregateList,
                 description,
                 price,
                 activityDate,
                 totalNumberOfSeats
                 );
-        return activity;
+        return activityRootEntity;
+    }
+
+    public void addSubscription(ActivityRepository activityRepository, SubscriptionAggregate subscriptionAggregate) {
+        activityRepository.addSubscription(subscriptionAggregate);
     }
 
 }

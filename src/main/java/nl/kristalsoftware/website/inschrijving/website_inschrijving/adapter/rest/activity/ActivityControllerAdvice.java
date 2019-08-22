@@ -3,9 +3,9 @@ package nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.res
 import lombok.RequiredArgsConstructor;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.DataNotFoundException;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.rest.RestErrorBuilder;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityNotFoundException;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.AgendaReferenceNotFoundException;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.SubscriptionNotFoundException;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.ActivityNotFoundException;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.AgendaReferenceNotFoundException;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.subscription.SubscriptionNotFoundException;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;

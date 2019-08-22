@@ -8,7 +8,7 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.adapter.data
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Note;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionRef;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -30,7 +30,7 @@ public class DbSubscription {
     private Long id;
 
     @Embedded
-    SubscriptionId subscriptionid;
+    private SubscriptionRef subscriptionRef;
 
     @ManyToOne
     private DbActivity activity;
@@ -44,8 +44,8 @@ public class DbSubscription {
     @Embedded
     private Note note;
 
-    public static DbSubscription of(SubscriptionId subscriptionid, DbActivity activity, Name name, Email email, Note note) {
-        return new DbSubscription(null, subscriptionid, activity, name, email, note);
+    public static DbSubscription of(SubscriptionRef subscriptionRef, DbActivity activity, Name name, Email email, Note note) {
+        return new DbSubscription(null, subscriptionRef, activity, name, email, note);
     }
 
 }

@@ -1,4 +1,4 @@
-package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription;
+package nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.subscription;
 
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.DataNotFoundException;
 

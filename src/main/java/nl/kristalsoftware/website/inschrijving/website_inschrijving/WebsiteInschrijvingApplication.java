@@ -8,13 +8,14 @@ import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Email
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Name;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Note;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.Price;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionId;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.SubscriptionRef;
 import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.TotalNumberOfSeats;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.Activity;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.ActivityService;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.activity.subscription.Subscription;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.product.Product;
-import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.product.ProductService;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.ActivityAggregate;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.ActivityRepository;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.ActivityRootEntity;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.agenda.activity.subscription.SubscriptionAggregate;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.catalog.CatalogAggregate;
+import nl.kristalsoftware.website.inschrijving.website_inschrijving.domain.catalog.product.ProductRootEntity;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,14 +36,14 @@ public class WebsiteInschrijvingApplication {
     }
 
     @Bean
-    CommandLineRunner seedProductTable(ProductService productService) {
+    CommandLineRunner seedProductTable(CatalogAggregate catalogAggregate) {
         return args -> {
             log.info("Seed product table");
-            productService.addProduct(AgendaContentRef.of("35b177e7f7d35a7b23bb4d2c6201b736"),
+            catalogAggregate.addProduct(AgendaContentRef.of("35b177e7f7d35a7b23bb4d2c6201b736"),
                     Description.of("Energiewandeling"),
                     Price.of(new BigDecimal(0.00))
                     );
-            productService.addProduct(AgendaContentRef.of("35b177e7f7d35a7b23bb4d2c6201cf03"),
+            catalogAggregate.addProduct(AgendaContentRef.of("35b177e7f7d35a7b23bb4d2c6201cf03"),
                     Description.of("Meditatie"),
                     Price.of(new BigDecimal(20.00))
                     );
@@ -50,19 +51,19 @@ public class WebsiteInschrijvingApplication {
     }
 
     @Bean
-    CommandLineRunner seedActivityTable(ActivityService activityService, ProductService productService) {
+    CommandLineRunner seedActivityTable(ActivityAggregate activityaggregate, CatalogAggregate catalogAggregate) {
         return args -> {
             log.info("Seed activity table");
-            Optional<Product> energiewandeling = productService.findProductByDescription(Description.of("Energiewandeling"));
+            Optional<ProductRootEntity> energiewandeling = catalogAggregate.findProductByDescription(Description.of("Energiewandeling"));
             energiewandeling.ifPresent(it -> {
-                activityService.addActivity(
+                activityaggregate.addActivity(
                         it.getDescription(),
                         it.getPrice(),
                         ActivityDate.of(LocalDateTime.of(2019, 10, 23, 10, 0)),
                         TotalNumberOfSeats.of(5),
                         it.getAgendaContentRef()
                 );
-                activityService.addActivity(
+                activityaggregate.addActivity(
                         it.getDescription(),
                         it.getPrice(),
                         ActivityDate.of(LocalDateTime.of(2019, 11, 29, 10, 0)),
@@ -70,9 +71,9 @@ public class WebsiteInschrijvingApplication {
                         it.getAgendaContentRef()
                 );
             });
-            Optional<Product> meditatie = productService.findProductByDescription(Description.of("Meditatie"));
+            Optional<ProductRootEntity> meditatie = catalogAggregate.findProductByDescription(Description.of("Meditatie"));
             meditatie.ifPresent(it -> {
-                activityService.addActivity(
+                activityaggregate.addActivity(
                         it.getDescription(),
                         it.getPrice(),
                         ActivityDate.of(LocalDateTime.of(2019, 10, 28, 10, 0)),
@@ -81,7 +82,7 @@ public class WebsiteInschrijvingApplication {
                 );
             });
             energiewandeling.ifPresent(it -> {
-                activityService.addActivity(
+                activityaggregate.addActivity(
                         it.getDescription(),
                         it.getPrice(),
                         ActivityDate.of(LocalDateTime.of(2019, 8, 1, 10, 0)),
@@ -93,28 +94,28 @@ public class WebsiteInschrijvingApplication {
     }
 
     @Bean
-    CommandLineRunner seedSubscriptionTable(ActivityService activityService) {
+    CommandLineRunner seedSubscriptionTable(ActivityRepository activityRepository) {
         return args -> {
             log.info("Seed subscription table");
-            List<Activity> activityList = activityService.getAllCurrentActivities();
-            Optional<Activity> optionalActivity = activityList.stream()
+            List<ActivityRootEntity> activityRootEntityList = activityRepository.findCurrentActivities();
+            Optional<ActivityRootEntity> optionalActivity = activityRootEntityList.stream()
                     .filter(it -> it.getDescription().getDescription().equals("Energiewandeling"))
                     .findFirst();
             optionalActivity.ifPresent(it -> {
-                Subscription subscription = Subscription.of(
-                        SubscriptionId.of(UUID.randomUUID()),
+                SubscriptionAggregate subscriptionAggregate = SubscriptionAggregate.of(
+                        SubscriptionRef.of(UUID.randomUUID()),
                         it.getActivityid(),
                         Name.of("Sjoerd", "Adema"),
                         Email.of("s.adema@bla.com"),
                         Note.of("Is er ook thee?"));
-                activityService.addSubscription(subscription);
-                subscription = Subscription.of(
-                        SubscriptionId.of(UUID.randomUUID()),
+                it.addSubscription(activityRepository, subscriptionAggregate);
+                subscriptionAggregate = SubscriptionAggregate.of(
+                        SubscriptionRef.of(UUID.randomUUID()),
                         it.getActivityid(),
                         Name.of("John", "Doe"),
                         Email.of("j.doe@gmail.com"),
                         null);
-                activityService.addSubscription(subscription);
+                it.addSubscription(activityRepository, subscriptionAggregate);
             });
         };
     }
